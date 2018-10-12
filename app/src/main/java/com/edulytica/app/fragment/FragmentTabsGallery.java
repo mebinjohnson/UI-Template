@@ -1,0 +1,79 @@
+/*
+ * Copyright (c) 2018. Netsaps Technologies Pvt Ltd - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Last updated by Habel Philip <habel@netsaps.com>, 1/5/18 4:45 PM
+ *
+ */
+
+package com.edulytica.app.fragment;
+
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.edulytica.app.R;
+import com.edulytica.app.adapter.AdapterGridSectioned;
+import com.edulytica.app.data.DataGenerator;
+import com.edulytica.app.model.SectionImage;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class FragmentTabsGallery extends Fragment {
+
+    public FragmentTabsGallery() {
+    }
+
+    public static FragmentTabsGallery newInstance() {
+        FragmentTabsGallery fragment = new FragmentTabsGallery();
+        return fragment;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View root = inflater.inflate(R.layout.fragment_tabs_gallery, container, false);
+
+        RecyclerView recyclerView = root.findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
+        recyclerView.setHasFixedSize(true);
+
+        List<Integer> items_img = DataGenerator.getNatureImages(getActivity());
+        items_img.addAll(DataGenerator.getNatureImages(getActivity()));
+        items_img.addAll(DataGenerator.getNatureImages(getActivity()));
+        items_img.addAll(DataGenerator.getNatureImages(getActivity()));
+        items_img.addAll(DataGenerator.getNatureImages(getActivity()));
+
+        List<SectionImage> items = new ArrayList<>();
+        for (Integer i : items_img) {
+            items.add(new SectionImage(i, "IMG_" + i + ".jpg", false));
+        }
+
+        int sect_count = 0;
+        int sect_idx = 0;
+        List<String> months = DataGenerator.getStringsMonth(getActivity());
+        for (int i = 0; i < items.size() / 10; i++) {
+            items.add(sect_count, new SectionImage(-1, months.get(sect_idx), true));
+            sect_count = sect_count + 10;
+            sect_idx++;
+        }
+
+        //set data and list adapter
+        AdapterGridSectioned mAdapter = new AdapterGridSectioned(getActivity(), items);
+        recyclerView.setAdapter(mAdapter);
+
+        // on item list clicked
+        mAdapter.setOnItemClickListener(new AdapterGridSectioned.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, SectionImage obj, int position) {
+
+            }
+        });
+
+        return root;
+    }
+}
